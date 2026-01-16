@@ -6,7 +6,7 @@ import SwiftUI
 struct GuitarTunerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TunerView()
         }
     }
 }
