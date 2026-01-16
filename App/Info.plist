@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app uses the microphone to detect audio pitch for guitar tuning.</string>
+	<string>Guitar Tuner needs microphone access to detect the pitch of your guitar strings.</string>
 </dict>
 </plist>

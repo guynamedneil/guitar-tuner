@@ -20,10 +20,14 @@ final class TunerViewModel {
     /// The current audio input mode
     let audioInputMode: AudioInputMode
 
+    /// The current microphone permission status (only relevant for real audio mode)
+    var microphonePermissionStatus: MicrophonePermissionStatus = .notDetermined
+
     // MARK: - Private Properties
 
     private var pitchSource: MockPitchSource?
     private var listeningTask: Task<Void, Never>?
+    private let permissionManager = MicrophonePermissionManager()
 
     // MARK: - Initialization
 
@@ -33,11 +37,33 @@ final class TunerViewModel {
 
     // MARK: - Actions
 
+    /// Checks the current microphone permission status and updates the state
+    func checkMicrophonePermission() {
+        guard audioInputMode == .real else { return }
+        microphonePermissionStatus = permissionManager.currentStatus
+        AudioLogger.audio.info("Microphone permission status: \(String(describing: self.microphonePermissionStatus))")
+    }
+
+    /// Requests microphone permission and updates the state
+    func requestMicrophonePermission() async {
+        microphonePermissionStatus = await permissionManager.requestPermission()
+    }
+
+    /// Opens the system Settings app to grant microphone permission
+    func openMicrophoneSettings() {
+        permissionManager.openSettings()
+    }
+
     /// Starts the tuning session and begins audio capture
     func startTuning() {
         guard !isAudioRunning else { return }
 
         guard let mockMode = audioInputMode.mockMode else {
+            // Real audio mode: check permission before starting
+            if microphonePermissionStatus != .granted {
+                AudioLogger.audio.warning("Cannot start tuning - microphone permission not granted")
+                return
+            }
             AudioLogger.audio.warning("Real audio mode not yet implemented")
             return
         }
