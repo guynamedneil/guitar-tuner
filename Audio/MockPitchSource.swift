@@ -38,16 +38,21 @@ final class MockPitchSource {
         guard !isRunning else { return }
         isRunning = true
 
+        AudioLogger.audio.info("Mock pitch source started - mode: \(String(describing: self.mode))")
+
         generatorTask = Task { [weak self] in
             await self?.generatePitchFrames()
         }
     }
 
     func stop() {
+        guard isRunning else { return }
         isRunning = false
         generatorTask?.cancel()
         generatorTask = nil
         continuation?.finish()
+
+        AudioLogger.audio.info("Mock pitch source stopped")
     }
 
     // MARK: - Pitch Frame Generation

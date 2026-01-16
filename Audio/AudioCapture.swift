@@ -11,6 +11,8 @@ final class AudioCapture {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playAndRecord, mode: .measurement, options: .defaultToSpeaker)
         try session.setActive(true)
+
+        AudioLogger.audio.info("Audio session configured - category: playAndRecord, mode: measurement")
     }
 
     /// Starts capturing audio from the microphone
@@ -24,11 +26,15 @@ final class AudioCapture {
         }
 
         try audioEngine.start()
+
+        AudioLogger.audio.info("Audio capture started - sampleRate: \(format.sampleRate, format: .fixed(precision: 0)) Hz, channels: \(format.channelCount)")
     }
 
     /// Stops audio capture and removes the tap
     func stopCapture() {
         audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.stop()
+
+        AudioLogger.audio.info("Audio capture stopped")
     }
 }

@@ -41,16 +41,21 @@ final class MockAudioInput: AudioInput {
         guard !isRunning else { return }
         isRunning = true
 
+        AudioLogger.audio.info("Mock audio input started - sampleRate: \(self.sampleRate, format: .fixed(precision: 0)) Hz, mode: \(String(describing: self.mode))")
+
         generatorTask = Task { [weak self] in
             await self?.generateSamples()
         }
     }
 
     func stop() {
+        guard isRunning else { return }
         isRunning = false
         generatorTask?.cancel()
         generatorTask = nil
         continuation?.finish()
+
+        AudioLogger.audio.info("Mock audio input stopped")
     }
 
     // MARK: - Sample Generation

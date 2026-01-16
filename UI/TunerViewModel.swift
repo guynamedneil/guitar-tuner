@@ -38,9 +38,11 @@ final class TunerViewModel {
         guard !isAudioRunning else { return }
 
         guard let mockMode = audioInputMode.mockMode else {
-            print("[TunerViewModel] Real audio mode not yet implemented")
+            AudioLogger.audio.warning("Real audio mode not yet implemented")
             return
         }
+
+        AudioLogger.audio.info("Tuning session started - mode: \(self.audioInputMode.description)")
 
         pitchSource = MockPitchSource(mode: mockMode)
         isAudioRunning = true
@@ -56,6 +58,8 @@ final class TunerViewModel {
 
     /// Stops the tuning session and ends audio capture
     func stopTuning() {
+        guard isAudioRunning else { return }
+
         listeningTask?.cancel()
         listeningTask = nil
         pitchSource?.stop()
@@ -63,6 +67,8 @@ final class TunerViewModel {
         isAudioRunning = false
         currentNote = "--"
         centsOffset = 0.0
+
+        AudioLogger.audio.info("Tuning session stopped")
     }
 
     /// Toggles the tuning session on or off
