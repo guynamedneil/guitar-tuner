@@ -1,3 +1,5 @@
+import AVFoundation
+import Combine
 import Foundation
 
 // MARK: - Tuner ViewModel
@@ -17,6 +19,9 @@ final class TunerViewModel {
     /// Whether the audio capture is currently running
     var isAudioRunning: Bool = false
 
+    /// Whether the audio session is interrupted (phone call, Siri, etc.)
+    var isInterrupted: Bool = false
+
     /// The current audio input mode
     let audioInputMode: AudioInputMode
 
@@ -26,8 +31,11 @@ final class TunerViewModel {
     // MARK: - Private Properties
 
     private var pitchSource: MockPitchSource?
+    private var audioCapture: AudioCapture?
+    private var pitchDetector: PitchDetector?
     private var listeningTask: Task<Void, Never>?
     private let permissionManager = MicrophonePermissionManager()
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
 
@@ -59,15 +67,12 @@ final class TunerViewModel {
         guard !isAudioRunning else { return }
 
         guard let mockMode = audioInputMode.mockMode else {
-            // Real audio mode: check permission before starting
-            if microphonePermissionStatus != .granted {
-                AudioLogger.audio.warning("Cannot start tuning - microphone permission not granted")
-                return
-            }
-            AudioLogger.audio.warning("Real audio mode not yet implemented")
+            // Real audio mode
+            startRealAudioCapture()
             return
         }
 
+        // Mock audio mode
         AudioLogger.audio.info("Tuning session started - mode: \(self.audioInputMode.description)")
 
         pitchSource = MockPitchSource(mode: mockMode)
@@ -82,6 +87,91 @@ final class TunerViewModel {
         }
     }
 
+    /// Starts real audio capture from the microphone
+    private func startRealAudioCapture() {
+        guard microphonePermissionStatus == .granted else {
+            AudioLogger.audio.warning("Cannot start tuning - microphone permission not granted")
+            return
+        }
+
+        AudioLogger.audio.info("Tuning session started - mode: real audio")
+
+        do {
+            let capture = AudioCapture()
+            self.audioCapture = capture
+
+            setupInterruptionHandling(for: capture)
+
+            try capture.configureAudioSession()
+            try capture.activateAudioSession()
+
+            let detector = PitchDetector()
+            self.pitchDetector = detector
+
+            try capture.startCapture { [weak self] buffer in
+                guard let self else { return }
+                if let frame = self.pitchDetector?.process(buffer: buffer) {
+                    Task { @MainActor [weak self] in
+                        self?.handlePitchFrame(frame)
+                    }
+                }
+            }
+
+            isAudioRunning = true
+        } catch {
+            AudioLogger.audio.error("Failed to start real audio capture: \(error.localizedDescription)")
+            cleanupRealAudioCapture()
+        }
+    }
+
+    /// Sets up interruption handling for the audio capture
+    private func setupInterruptionHandling(for capture: AudioCapture) {
+        capture.interruptionPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                self?.handleInterruption(event)
+            }
+            .store(in: &cancellables)
+
+        capture.routeChangePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                self?.handleRouteChange(event)
+            }
+            .store(in: &cancellables)
+    }
+
+    /// Handles audio session interruption events
+    private func handleInterruption(_ event: AudioInterruptionEvent) {
+        switch event {
+        case .began:
+            isInterrupted = true
+            currentNote = "--"
+            centsOffset = 0.0
+            AudioLogger.audio.info("UI updated for interruption began")
+
+        case .ended(let shouldResume):
+            isInterrupted = false
+            AudioLogger.audio.info("UI updated for interruption ended - shouldResume: \(shouldResume)")
+        }
+    }
+
+    /// Handles audio route change events
+    private func handleRouteChange(_ event: AudioRouteChangeEvent) {
+        guard event.requiresReconfiguration else { return }
+        stopTuning()
+        AudioLogger.audio.warning("Tuning stopped due to route change requiring reconfiguration")
+    }
+
+    /// Cleans up real audio capture resources
+    private func cleanupRealAudioCapture() {
+        cancellables.removeAll()
+        audioCapture?.stopCapture()
+        audioCapture?.deactivateAudioSession()
+        audioCapture = nil
+        pitchDetector = nil
+    }
+
     /// Stops the tuning session and ends audio capture
     func stopTuning() {
         guard isAudioRunning else { return }
@@ -90,11 +180,28 @@ final class TunerViewModel {
         listeningTask = nil
         pitchSource?.stop()
         pitchSource = nil
+
+        cleanupRealAudioCapture()
+
         isAudioRunning = false
+        isInterrupted = false
         currentNote = "--"
         centsOffset = 0.0
 
         AudioLogger.audio.info("Tuning session stopped")
+    }
+
+    /// Called when the app enters the background
+    func handleAppDidEnterBackground() {
+        guard isAudioRunning, audioInputMode == .real else { return }
+        AudioLogger.audio.info("App entering background - stopping real audio")
+        stopTuning()
+    }
+
+    /// Called when the app becomes active
+    func handleAppDidBecomeActive() {
+        guard audioInputMode == .real else { return }
+        checkMicrophonePermission()
     }
 
     /// Toggles the tuning session on or off

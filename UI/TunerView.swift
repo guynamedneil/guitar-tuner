@@ -5,6 +5,7 @@ import SwiftUI
 /// Main tuner interface displaying note detection, cents offset, and audio controls
 struct TunerView: View {
     @State private var viewModel: TunerViewModel
+    @Environment(\.scenePhase) private var scenePhase
 
     init(audioInputMode: AudioInputMode = .mockGlide) {
         _viewModel = State(initialValue: TunerViewModel(audioInputMode: audioInputMode))
@@ -27,6 +28,22 @@ struct TunerView: View {
             }
         }
         .onAppear(perform: viewModel.checkMicrophonePermission)
+        .onChange(of: scenePhase) { _, newPhase in
+            handleScenePhaseChange(newPhase)
+        }
+    }
+
+    private func handleScenePhaseChange(_ phase: ScenePhase) {
+        switch phase {
+        case .active:
+            viewModel.handleAppDidBecomeActive()
+        case .background:
+            viewModel.handleAppDidEnterBackground()
+        case .inactive:
+            break
+        @unknown default:
+            break
+        }
     }
 
     // MARK: - Tuner Content
@@ -61,17 +78,13 @@ struct TunerView: View {
 
     private var centsDisplay: some View {
         HStack(spacing: 4) {
-            Text(centsText)
+            Text(String(format: "%+.0f", viewModel.centsOffset))
                 .font(.system(size: 32, weight: .medium, design: .monospaced))
                 .foregroundStyle(.secondary)
             Text("cents")
                 .font(.system(size: 18, weight: .regular))
                 .foregroundStyle(.tertiary)
         }
-    }
-
-    private var centsText: String {
-        String(format: "%+.0f", viewModel.centsOffset)
     }
 
     // MARK: - Control Button

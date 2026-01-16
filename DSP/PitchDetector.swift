@@ -1,4 +1,5 @@
 import Accelerate
+import AVFoundation
 
 // MARK: - Pitch Detection
 
@@ -12,6 +13,9 @@ struct PitchDetector {
 
     /// Sample rate of the audio input
     let sampleRate: Double
+
+    /// Minimum RMS amplitude required for pitch detection
+    private let rmsThreshold: Float = 0.01
 
     init(sampleRate: Double = 44100, minimumFrequency: Double = 60, maximumFrequency: Double = 500) {
         self.sampleRate = sampleRate
@@ -44,6 +48,32 @@ struct PitchDetector {
         }
 
         return sampleRate / Double(bestLag)
+    }
+
+    /// Processes an audio buffer and returns a pitch frame
+    /// - Parameter buffer: The audio buffer to process
+    /// - Returns: A PitchFrame with the detected pitch, or nil if the buffer is invalid
+    func process(buffer: AVAudioPCMBuffer) -> PitchFrame? {
+        guard let channelData = buffer.floatChannelData else { return nil }
+
+        let frameLength = Int(buffer.frameLength)
+        guard frameLength > 0 else { return nil }
+
+        let samples = Array(UnsafeBufferPointer(start: channelData[0], count: frameLength))
+
+        var rms: Float = 0
+        vDSP_rmsqv(samples, 1, &rms, vDSP_Length(frameLength))
+
+        let timestamp = Date().timeIntervalSince1970
+
+        guard rms > rmsThreshold else {
+            return PitchFrame(frequencyHz: nil, confidence: 0, rms: Double(rms), timestamp: timestamp)
+        }
+
+        let frequency = detectPitch(in: samples)
+        let confidence = min(Double(rms) / 0.1, 1.0)
+
+        return PitchFrame(frequencyHz: frequency, confidence: confidence, rms: Double(rms), timestamp: timestamp)
     }
 }
 
