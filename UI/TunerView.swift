@@ -10,7 +10,28 @@ struct TunerView: View {
         _viewModel = State(initialValue: TunerViewModel(audioInputMode: audioInputMode))
     }
 
+    private var needsMicrophonePermission: Bool {
+        viewModel.audioInputMode == .real && viewModel.microphonePermissionStatus != .granted
+    }
+
     var body: some View {
+        Group {
+            if needsMicrophonePermission {
+                MicrophonePermissionView(
+                    permissionStatus: viewModel.microphonePermissionStatus,
+                    onRequestPermission: viewModel.requestMicrophonePermission,
+                    onOpenSettings: viewModel.openMicrophoneSettings
+                )
+            } else {
+                tunerContent
+            }
+        }
+        .onAppear(perform: viewModel.checkMicrophonePermission)
+    }
+
+    // MARK: - Tuner Content
+
+    private var tunerContent: some View {
         VStack(spacing: 40) {
             Spacer()
 
@@ -89,4 +110,8 @@ struct TunerView: View {
 
 #Preview("Mock Step Notes Mode") {
     TunerView(audioInputMode: .mockStepNotes)
+}
+
+#Preview("Real Audio Mode") {
+    TunerView(audioInputMode: .real)
 }
