@@ -15,6 +15,16 @@
 		A100000B229F0001000A0001 /* GuitarTunerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000C229F0001000A0001 /* GuitarTunerTests.swift */; };
 		A100002B229F0001000A0001 /* TunerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C229F0001000A0001 /* TunerViewModel.swift */; };
 		A100002D229F0001000A0001 /* TunerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002E229F0001000A0001 /* TunerView.swift */; };
+		A1000030229F0001000A0001 /* PitchFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000031229F0001000A0001 /* PitchFrame.swift */; };
+		A1000032229F0001000A0001 /* TunerReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000033229F0001000A0001 /* TunerReading.swift */; };
+		A1000034229F0001000A0001 /* PitchDetecting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000035229F0001000A0001 /* PitchDetecting.swift */; };
+		A1000036229F0001000A0001 /* PitchStabilizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000037229F0001000A0001 /* PitchStabilizing.swift */; };
+		A1000038229F0001000A0001 /* AudioInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000039229F0001000A0001 /* AudioInput.swift */; };
+		A100003A229F0001000A0001 /* AudioInputMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100003B229F0001000A0001 /* AudioInputMode.swift */; };
+		A100003C229F0001000A0001 /* MockAudioInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100003D229F0001000A0001 /* MockAudioInput.swift */; };
+		A100003E229F0001000A0001 /* MockPitchSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100003F229F0001000A0001 /* MockPitchSource.swift */; };
+		A1000040229F0001000A0001 /* MockAudioInputTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000041229F0001000A0001 /* MockAudioInputTests.swift */; };
+		A1000042229F0001000A0001 /* MockFrequencyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000043229F0001000A0001 /* MockFrequencyGenerator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +48,16 @@
 		A1000011229F0001000A0001 /* GuitarTunerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GuitarTunerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A100002C229F0001000A0001 /* TunerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunerViewModel.swift; sourceTree = "<group>"; };
 		A100002E229F0001000A0001 /* TunerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunerView.swift; sourceTree = "<group>"; };
+		A1000031229F0001000A0001 /* PitchFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchFrame.swift; sourceTree = "<group>"; };
+		A1000033229F0001000A0001 /* TunerReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunerReading.swift; sourceTree = "<group>"; };
+		A1000035229F0001000A0001 /* PitchDetecting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchDetecting.swift; sourceTree = "<group>"; };
+		A1000037229F0001000A0001 /* PitchStabilizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchStabilizing.swift; sourceTree = "<group>"; };
+		A1000039229F0001000A0001 /* AudioInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioInput.swift; sourceTree = "<group>"; };
+		A100003B229F0001000A0001 /* AudioInputMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioInputMode.swift; sourceTree = "<group>"; };
+		A100003D229F0001000A0001 /* MockAudioInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAudioInput.swift; sourceTree = "<group>"; };
+		A100003F229F0001000A0001 /* MockPitchSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPitchSource.swift; sourceTree = "<group>"; };
+		A1000041229F0001000A0001 /* MockAudioInputTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAudioInputTests.swift; sourceTree = "<group>"; };
+		A1000043229F0001000A0001 /* MockFrequencyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFrequencyGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +113,9 @@
 			isa = PBXGroup;
 			children = (
 				A1000006229F0001000A0001 /* AudioCapture.swift */,
+				A100003D229F0001000A0001 /* MockAudioInput.swift */,
+				A1000043229F0001000A0001 /* MockFrequencyGenerator.swift */,
+				A100003F229F0001000A0001 /* MockPitchSource.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -109,6 +132,12 @@
 			isa = PBXGroup;
 			children = (
 				A100000A229F0001000A0001 /* Note.swift */,
+				A1000031229F0001000A0001 /* PitchFrame.swift */,
+				A1000033229F0001000A0001 /* TunerReading.swift */,
+				A1000035229F0001000A0001 /* PitchDetecting.swift */,
+				A1000037229F0001000A0001 /* PitchStabilizing.swift */,
+				A1000039229F0001000A0001 /* AudioInput.swift */,
+				A100003B229F0001000A0001 /* AudioInputMode.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -117,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				A100000C229F0001000A0001 /* GuitarTunerTests.swift */,
+				A1000041229F0001000A0001 /* MockAudioInputTests.swift */,
 			);
 			path = GuitarTunerTests;
 			sourceTree = "<group>";
@@ -235,6 +265,15 @@
 				A1000009229F0001000A0001 /* Note.swift in Sources */,
 				A100002B229F0001000A0001 /* TunerViewModel.swift in Sources */,
 				A100002D229F0001000A0001 /* TunerView.swift in Sources */,
+				A1000030229F0001000A0001 /* PitchFrame.swift in Sources */,
+				A1000032229F0001000A0001 /* TunerReading.swift in Sources */,
+				A1000034229F0001000A0001 /* PitchDetecting.swift in Sources */,
+				A1000036229F0001000A0001 /* PitchStabilizing.swift in Sources */,
+				A1000038229F0001000A0001 /* AudioInput.swift in Sources */,
+				A100003A229F0001000A0001 /* AudioInputMode.swift in Sources */,
+				A100003C229F0001000A0001 /* MockAudioInput.swift in Sources */,
+				A1000042229F0001000A0001 /* MockFrequencyGenerator.swift in Sources */,
+				A100003E229F0001000A0001 /* MockPitchSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +282,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A100000B229F0001000A0001 /* GuitarTunerTests.swift in Sources */,
+				A1000040229F0001000A0001 /* MockAudioInputTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

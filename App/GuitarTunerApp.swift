@@ -6,7 +6,11 @@ import SwiftUI
 struct GuitarTunerApp: App {
     var body: some Scene {
         WindowGroup {
-            TunerView()
+            #if DEBUG
+            TunerView(audioInputMode: .mockStepNotes)
+            #else
+            TunerView(audioInputMode: .real)
+            #endif
         }
     }
 }

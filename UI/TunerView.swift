@@ -4,7 +4,11 @@ import SwiftUI
 
 /// Main tuner interface displaying note detection, cents offset, and audio controls
 struct TunerView: View {
-    @State private var viewModel = TunerViewModel()
+    @State private var viewModel: TunerViewModel
+
+    init(audioInputMode: AudioInputMode = .mockGlide) {
+        _viewModel = State(initialValue: TunerViewModel(audioInputMode: audioInputMode))
+    }
 
     var body: some View {
         VStack(spacing: 40) {
@@ -15,7 +19,7 @@ struct TunerView: View {
 
             Spacer()
 
-            startButton
+            controlButton
             debugSection
 
             Spacer()
@@ -49,31 +53,40 @@ struct TunerView: View {
         String(format: "%+.0f", viewModel.centsOffset)
     }
 
-    // MARK: - Start Button
+    // MARK: - Control Button
 
-    private var startButton: some View {
-        Button("Start", action: viewModel.startTuning)
-            .font(.title2)
-            .fontWeight(.semibold)
-            .frame(minWidth: 120)
-            .padding(.vertical, 12)
-            .padding(.horizontal, 24)
-            .buttonStyle(.borderedProminent)
-            .disabled(viewModel.isAudioRunning)
+    private var controlButton: some View {
+        Button(viewModel.isAudioRunning ? "Stop" : "Start") {
+            viewModel.toggleTuning()
+        }
+        .font(.title2)
+        .fontWeight(.semibold)
+        .frame(minWidth: 120)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 24)
+        .buttonStyle(.borderedProminent)
+        .tint(viewModel.isAudioRunning ? .red : .blue)
     }
 
     // MARK: - Debug Section
 
     private var debugSection: some View {
-        Text("audio: \(viewModel.isAudioRunning ? "running" : "not running")")
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .padding(.top, 8)
+        VStack(spacing: 4) {
+            Text("audio: \(viewModel.isAudioRunning ? "running" : "stopped")")
+            Text("mode: \(viewModel.audioInputMode.description)")
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .padding(.top, 8)
     }
 }
 
 // MARK: - Preview
 
-#Preview {
-    TunerView()
+#Preview("Mock Glide Mode") {
+    TunerView(audioInputMode: .mockGlide)
+}
+
+#Preview("Mock Step Notes Mode") {
+    TunerView(audioInputMode: .mockStepNotes)
 }
