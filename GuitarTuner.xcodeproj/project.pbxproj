@@ -13,6 +13,8 @@
 		A1000007229F0001000A0001 /* PitchDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000008229F0001000A0001 /* PitchDetector.swift */; };
 		A1000009229F0001000A0001 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A229F0001000A0001 /* Note.swift */; };
 		A100000B229F0001000A0001 /* GuitarTunerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000C229F0001000A0001 /* GuitarTunerTests.swift */; };
+		A100002B229F0001000A0001 /* TunerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C229F0001000A0001 /* TunerViewModel.swift */; };
+		A100002D229F0001000A0001 /* TunerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002E229F0001000A0001 /* TunerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,8 @@
 		A100000C229F0001000A0001 /* GuitarTunerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuitarTunerTests.swift; sourceTree = "<group>"; };
 		A1000010229F0001000A0001 /* GuitarTuner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GuitarTuner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1000011229F0001000A0001 /* GuitarTunerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GuitarTunerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A100002C229F0001000A0001 /* TunerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunerViewModel.swift; sourceTree = "<group>"; };
+		A100002E229F0001000A0001 /* TunerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +83,8 @@
 			isa = PBXGroup;
 			children = (
 				A1000004229F0001000A0001 /* ContentView.swift */,
+				A100002C229F0001000A0001 /* TunerViewModel.swift */,
+				A100002E229F0001000A0001 /* TunerView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -227,6 +233,8 @@
 				A1000005229F0001000A0001 /* AudioCapture.swift in Sources */,
 				A1000007229F0001000A0001 /* PitchDetector.swift in Sources */,
 				A1000009229F0001000A0001 /* Note.swift in Sources */,
+				A100002B229F0001000A0001 /* TunerViewModel.swift in Sources */,
+				A100002D229F0001000A0001 /* TunerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
