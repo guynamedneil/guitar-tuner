@@ -25,6 +25,7 @@
 		A100003E229F0001000A0001 /* MockPitchSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100003F229F0001000A0001 /* MockPitchSource.swift */; };
 		A1000040229F0001000A0001 /* MockAudioInputTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000041229F0001000A0001 /* MockAudioInputTests.swift */; };
 		A1000042229F0001000A0001 /* MockFrequencyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000043229F0001000A0001 /* MockFrequencyGenerator.swift */; };
+		A1000044229F0001000A0001 /* AudioLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000045229F0001000A0001 /* AudioLogger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		A100003F229F0001000A0001 /* MockPitchSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPitchSource.swift; sourceTree = "<group>"; };
 		A1000041229F0001000A0001 /* MockAudioInputTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAudioInputTests.swift; sourceTree = "<group>"; };
 		A1000043229F0001000A0001 /* MockFrequencyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFrequencyGenerator.swift; sourceTree = "<group>"; };
+		A1000045229F0001000A0001 /* AudioLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLogger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 				A1000017229F0001000A0001 /* Audio */,
 				A1000018229F0001000A0001 /* DSP */,
 				A1000019229F0001000A0001 /* Domain */,
+				A1000046229F0001000A0001 /* Logging */,
 				A100001A229F0001000A0001 /* GuitarTunerTests */,
 				A100001B229F0001000A0001 /* Products */,
 			);
@@ -158,6 +161,14 @@
 				A1000011229F0001000A0001 /* GuitarTunerTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A1000046229F0001000A0001 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				A1000045229F0001000A0001 /* AudioLogger.swift */,
+			);
+			path = Logging;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -274,6 +285,7 @@
 				A100003C229F0001000A0001 /* MockAudioInput.swift in Sources */,
 				A1000042229F0001000A0001 /* MockFrequencyGenerator.swift in Sources */,
 				A100003E229F0001000A0001 /* MockPitchSource.swift in Sources */,
+				A1000044229F0001000A0001 /* AudioLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
