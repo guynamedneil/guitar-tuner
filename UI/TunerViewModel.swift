@@ -160,8 +160,9 @@ final class TunerViewModel {
     }
 
     private func processRealAudioSamples(_ samples: [Float]) {
-        guard let detector = pitchDetector else { return }
+        guard var detector = pitchDetector else { return }
         let frame = detector.detect(samples, sampleRate: detector.sampleRate)
+        pitchDetector = detector
         updateDisplayFromPitchFrame(frame)
     }
 

@@ -20,18 +20,23 @@ struct PitchDetector: PitchDetecting {
     /// Minimum confidence required to report a valid pitch
     let confidenceThreshold: Double
 
+    /// Signal conditioner for preprocessing audio before pitch detection
+    private var signalConditioner: SignalConditioner
+
     init(
         sampleRate: Double = 44100,
         minimumFrequency: Double = 60,
         maximumFrequency: Double = 500,
         silenceThreshold: Float = 0.01,
-        confidenceThreshold: Double = 0.2
+        confidenceThreshold: Double = 0.2,
+        conditionerConfig: SignalConditionerConfig = .default
     ) {
         self.sampleRate = sampleRate
         self.minimumFrequency = minimumFrequency
         self.maximumFrequency = maximumFrequency
         self.silenceThreshold = silenceThreshold
         self.confidenceThreshold = confidenceThreshold
+        self.signalConditioner = SignalConditioner(config: conditionerConfig)
     }
 
     // MARK: - PitchDetecting Protocol
@@ -41,29 +46,34 @@ struct PitchDetector: PitchDetecting {
     ///   - frame: Array of audio samples (PCM Float values)
     ///   - sampleRate: The sample rate of the audio in Hz
     /// - Returns: A PitchFrame containing the detection results
-    func detect(_ frame: [Float], sampleRate: Double) -> PitchFrame {
+    mutating func detect(_ frame: [Float], sampleRate: Double) -> PitchFrame {
         let timestamp = Date().timeIntervalSince1970
+
+        // Calculate RMS on original signal for accurate silence detection
         let rms = calculateRMS(frame)
 
         guard !frame.isEmpty else {
             return PitchFrame(frequencyHz: nil, confidence: 0.0, rms: rms, timestamp: timestamp)
         }
 
-        // Check for silence
+        // Check for silence before conditioning
         if rms < Double(silenceThreshold) {
             return PitchFrame(frequencyHz: nil, confidence: 0.0, rms: rms, timestamp: timestamp)
         }
 
+        // Apply signal conditioning (DC removal, pre-emphasis, windowing)
+        let conditionedFrame = signalConditioner.condition(frame)
+
         let minLag = Int(sampleRate / maximumFrequency)
         let maxLag = Int(sampleRate / minimumFrequency)
 
-        guard maxLag < frame.count, minLag < maxLag else {
+        guard maxLag < conditionedFrame.count, minLag < maxLag else {
             return PitchFrame(frequencyHz: nil, confidence: 0.0, rms: rms, timestamp: timestamp)
         }
 
         // Calculate autocorrelation at lag 0 for normalization
         var zeroLagCorrelation: Float = 0
-        vDSP_dotpr(frame, 1, frame, 1, &zeroLagCorrelation, vDSP_Length(frame.count))
+        vDSP_dotpr(conditionedFrame, 1, conditionedFrame, 1, &zeroLagCorrelation, vDSP_Length(conditionedFrame.count))
 
         guard zeroLagCorrelation > 0 else {
             return PitchFrame(frequencyHz: nil, confidence: 0.0, rms: rms, timestamp: timestamp)
@@ -77,9 +87,9 @@ struct PitchDetector: PitchDetecting {
         for i in 0..<(maxLag - minLag) {
             let lag = minLag + i
             var correlation: Float = 0
-            let overlapLength = frame.count - lag
+            let overlapLength = conditionedFrame.count - lag
 
-            frame.withUnsafeBufferPointer { framePtr in
+            conditionedFrame.withUnsafeBufferPointer { framePtr in
                 let delayed = UnsafeBufferPointer(start: framePtr.baseAddress! + lag, count: overlapLength)
                 vDSP_dotpr(framePtr.baseAddress!, 1, delayed.baseAddress!, 1, &correlation, vDSP_Length(overlapLength))
             }
@@ -115,7 +125,7 @@ struct PitchDetector: PitchDetecting {
     /// Detects the fundamental frequency in the given audio samples
     /// - Parameter samples: Array of audio sample values
     /// - Returns: Detected frequency in Hz, or nil if no pitch detected
-    func detectPitch(in samples: [Float]) -> Double? {
+    mutating func detectPitch(in samples: [Float]) -> Double? {
         let frame = detect(samples, sampleRate: sampleRate)
         return frame.frequencyHz
     }
