@@ -5,6 +5,7 @@ import SwiftUI
 /// Main tuner interface displaying note detection, cents offset, and audio controls
 struct TunerView: View {
     @State private var viewModel: TunerViewModel
+    @Environment(\.scenePhase) private var scenePhase
 
     init(audioInputMode: AudioInputMode = .mockGlide) {
         _viewModel = State(initialValue: TunerViewModel(audioInputMode: audioInputMode))
@@ -27,6 +28,9 @@ struct TunerView: View {
             }
         }
         .onAppear(perform: viewModel.checkMicrophonePermission)
+        .onChange(of: scenePhase) { _, newPhase in
+            viewModel.handleAppActiveStateChange(isActive: newPhase == .active)
+        }
     }
 
     // MARK: - Tuner Content

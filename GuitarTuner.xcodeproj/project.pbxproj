@@ -10,6 +10,7 @@
 		A1000001229F0001000A0001 /* GuitarTunerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000002229F0001000A0001 /* GuitarTunerApp.swift */; };
 		A1000003229F0001000A0001 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000004229F0001000A0001 /* ContentView.swift */; };
 		A1000005229F0001000A0001 /* AudioCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000006229F0001000A0001 /* AudioCapture.swift */; };
+		A100004B229F0001000A0001 /* AudioSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100004C229F0001000A0001 /* AudioSessionManager.swift */; };
 		A1000007229F0001000A0001 /* PitchDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000008229F0001000A0001 /* PitchDetector.swift */; };
 		A1000009229F0001000A0001 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A229F0001000A0001 /* Note.swift */; };
 		A100000B229F0001000A0001 /* GuitarTunerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000C229F0001000A0001 /* GuitarTunerTests.swift */; };
@@ -64,6 +65,7 @@
 		A1000045229F0001000A0001 /* AudioLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLogger.swift; sourceTree = "<group>"; };
 		A1000048229F0001000A0001 /* MicrophonePermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophonePermissionManager.swift; sourceTree = "<group>"; };
 		A100004A229F0001000A0001 /* MicrophonePermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophonePermissionView.swift; sourceTree = "<group>"; };
+		A100004C229F0001000A0001 /* AudioSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSessionManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				A1000006229F0001000A0001 /* AudioCapture.swift */,
+				A100004C229F0001000A0001 /* AudioSessionManager.swift */,
 				A1000048229F0001000A0001 /* MicrophonePermissionManager.swift */,
 				A100003D229F0001000A0001 /* MockAudioInput.swift */,
 				A1000043229F0001000A0001 /* MockFrequencyGenerator.swift */,
@@ -278,6 +281,7 @@
 				A1000001229F0001000A0001 /* GuitarTunerApp.swift in Sources */,
 				A1000003229F0001000A0001 /* ContentView.swift in Sources */,
 				A1000005229F0001000A0001 /* AudioCapture.swift in Sources */,
+				A100004B229F0001000A0001 /* AudioSessionManager.swift in Sources */,
 				A1000007229F0001000A0001 /* PitchDetector.swift in Sources */,
 				A1000009229F0001000A0001 /* Note.swift in Sources */,
 				A100002B229F0001000A0001 /* TunerViewModel.swift in Sources */,
