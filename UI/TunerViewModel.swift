@@ -66,34 +66,37 @@ final class TunerViewModel {
     func startTuning() {
         guard !isAudioRunning else { return }
 
-        guard let mockMode = audioInputMode.mockMode else {
-            // Real audio mode
+        switch audioInputMode {
+        case .real:
+            guard microphonePermissionStatus == .granted else {
+                AudioLogger.audio.warning("Cannot start tuning - microphone permission not granted")
+                return
+            }
             startRealAudioCapture()
-            return
-        }
 
-        // Mock audio mode
+        case .mockGlide, .mockStepNotes:
+            guard let mockMode = audioInputMode.mockMode else { return }
+            startMockAudioTuning(mode: mockMode)
+        }
+    }
+
+    private func startMockAudioTuning(mode: MockFrequencyGenerator.Mode) {
         AudioLogger.audio.info("Tuning session started - mode: \(self.audioInputMode.description)")
 
-        pitchSource = MockPitchSource(mode: mockMode)
+        pitchSource = MockPitchSource(mode: mode)
         isAudioRunning = true
         pitchSource?.start()
 
         listeningTask = Task { [weak self] in
             guard let self, let pitchSource = self.pitchSource else { return }
             for await frame in pitchSource.pitchStream {
-                await self.handlePitchFrame(frame)
+                await self.updateDisplayFromPitchFrame(frame)
             }
         }
     }
 
     /// Starts real audio capture from the microphone
     private func startRealAudioCapture() {
-        guard microphonePermissionStatus == .granted else {
-            AudioLogger.audio.warning("Cannot start tuning - microphone permission not granted")
-            return
-        }
-
         AudioLogger.audio.info("Tuning session started - mode: real audio")
 
         do {
@@ -172,12 +175,20 @@ final class TunerViewModel {
         pitchDetector = nil
     }
 
+    /// Handles pitch frame from real audio capture
+    private func handlePitchFrame(_ frame: PitchFrame) {
+        updateDisplayFromPitchFrame(frame)
+    }
+
     /// Stops the tuning session and ends audio capture
     func stopTuning() {
-        guard isAudioRunning else { return }
+        guard isAudioRunning || isInterrupted else { return }
 
+        // Stop listening task
         listeningTask?.cancel()
         listeningTask = nil
+
+        // Stop mock audio if active
         pitchSource?.stop()
         pitchSource = nil
 
@@ -215,7 +226,7 @@ final class TunerViewModel {
 
     // MARK: - Pitch Processing
 
-    private func handlePitchFrame(_ frame: PitchFrame) {
+    private func updateDisplayFromPitchFrame(_ frame: PitchFrame) {
         guard let frequency = frame.frequencyHz, frame.confidence > 0.5 else {
             currentNote = "--"
             centsOffset = 0.0

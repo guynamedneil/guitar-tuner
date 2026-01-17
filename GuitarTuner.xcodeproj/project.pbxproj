@@ -29,6 +29,10 @@
 		A1000044229F0001000A0001 /* AudioLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000045229F0001000A0001 /* AudioLogger.swift */; };
 		A1000047229F0001000A0001 /* MicrophonePermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000048229F0001000A0001 /* MicrophonePermissionManager.swift */; };
 		A1000049229F0001000A0001 /* MicrophonePermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100004A229F0001000A0001 /* MicrophonePermissionView.swift */; };
+		A1000050229F0001000A0001 /* SampleBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000051229F0001000A0001 /* SampleBuffer.swift */; };
+		A1000052229F0001000A0001 /* LiveAudioInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000053229F0001000A0001 /* LiveAudioInput.swift */; };
+		A1000054229F0001000A0001 /* AudioMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000055229F0001000A0001 /* AudioMetrics.swift */; };
+		A1000056229F0001000A0001 /* SampleBufferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000057229F0001000A0001 /* SampleBufferTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +70,10 @@
 		A1000048229F0001000A0001 /* MicrophonePermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophonePermissionManager.swift; sourceTree = "<group>"; };
 		A100004A229F0001000A0001 /* MicrophonePermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophonePermissionView.swift; sourceTree = "<group>"; };
 		A100004C229F0001000A0001 /* AudioSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSessionManager.swift; sourceTree = "<group>"; };
+		A1000051229F0001000A0001 /* SampleBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleBuffer.swift; sourceTree = "<group>"; };
+		A1000053229F0001000A0001 /* LiveAudioInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveAudioInput.swift; sourceTree = "<group>"; };
+		A1000055229F0001000A0001 /* AudioMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMetrics.swift; sourceTree = "<group>"; };
+		A1000057229F0001000A0001 /* SampleBufferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleBufferTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,10 +132,12 @@
 			children = (
 				A1000006229F0001000A0001 /* AudioCapture.swift */,
 				A100004C229F0001000A0001 /* AudioSessionManager.swift */,
+				A1000053229F0001000A0001 /* LiveAudioInput.swift */,
 				A1000048229F0001000A0001 /* MicrophonePermissionManager.swift */,
 				A100003D229F0001000A0001 /* MockAudioInput.swift */,
 				A1000043229F0001000A0001 /* MockFrequencyGenerator.swift */,
 				A100003F229F0001000A0001 /* MockPitchSource.swift */,
+				A1000051229F0001000A0001 /* SampleBuffer.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -143,13 +153,14 @@
 		A1000019229F0001000A0001 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
-				A100000A229F0001000A0001 /* Note.swift */,
-				A1000031229F0001000A0001 /* PitchFrame.swift */,
-				A1000033229F0001000A0001 /* TunerReading.swift */,
-				A1000035229F0001000A0001 /* PitchDetecting.swift */,
-				A1000037229F0001000A0001 /* PitchStabilizing.swift */,
 				A1000039229F0001000A0001 /* AudioInput.swift */,
 				A100003B229F0001000A0001 /* AudioInputMode.swift */,
+				A1000055229F0001000A0001 /* AudioMetrics.swift */,
+				A100000A229F0001000A0001 /* Note.swift */,
+				A1000035229F0001000A0001 /* PitchDetecting.swift */,
+				A1000031229F0001000A0001 /* PitchFrame.swift */,
+				A1000037229F0001000A0001 /* PitchStabilizing.swift */,
+				A1000033229F0001000A0001 /* TunerReading.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -159,6 +170,7 @@
 			children = (
 				A100000C229F0001000A0001 /* GuitarTunerTests.swift */,
 				A1000041229F0001000A0001 /* MockAudioInputTests.swift */,
+				A1000057229F0001000A0001 /* SampleBufferTests.swift */,
 			);
 			path = GuitarTunerTests;
 			sourceTree = "<group>";
@@ -298,6 +310,9 @@
 				A1000044229F0001000A0001 /* AudioLogger.swift in Sources */,
 				A1000047229F0001000A0001 /* MicrophonePermissionManager.swift in Sources */,
 				A1000049229F0001000A0001 /* MicrophonePermissionView.swift in Sources */,
+				A1000050229F0001000A0001 /* SampleBuffer.swift in Sources */,
+				A1000052229F0001000A0001 /* LiveAudioInput.swift in Sources */,
+				A1000054229F0001000A0001 /* AudioMetrics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +322,7 @@
 			files = (
 				A100000B229F0001000A0001 /* GuitarTunerTests.swift in Sources */,
 				A1000040229F0001000A0001 /* MockAudioInputTests.swift in Sources */,
+				A1000056229F0001000A0001 /* SampleBufferTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
