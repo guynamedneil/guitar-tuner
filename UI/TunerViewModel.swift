@@ -33,7 +33,8 @@ final class TunerViewModel {
     private var listeningTask: Task<Void, Never>?
     private let permissionManager = MicrophonePermissionManager()
     private let audioSessionManager = AudioSessionManager()
-    private var audioCapture: AudioCapture?
+    private var liveAudioInput: LiveAudioInput?
+    private var pitchDetector: PitchDetector?
     private var interruptionCancellable: AnyCancellable?
     private var wasRunningBeforeInterruption: Bool = false
 
@@ -62,7 +63,7 @@ final class TunerViewModel {
             wasRunningBeforeInterruption = isAudioRunning
             if isAudioRunning {
                 isInterrupted = true
-                audioCapture?.pause()
+                liveAudioInput?.pause()
                 AudioLogger.audio.info("Tuning paused due to audio interruption")
             }
 
@@ -70,7 +71,7 @@ final class TunerViewModel {
             isInterrupted = false
             if wasRunningBeforeInterruption && shouldResume {
                 do {
-                    try audioCapture?.resume()
+                    try liveAudioInput?.resume()
                     AudioLogger.audio.info("Tuning resumed after audio interruption")
                 } catch {
                     AudioLogger.audio.error("Failed to resume audio capture: \(error.localizedDescription)")
@@ -136,20 +137,38 @@ final class TunerViewModel {
     private func startRealAudioTuning() {
         AudioLogger.audio.info("Tuning session started - mode: \(self.audioInputMode.description)")
 
-        let capture = AudioCapture(sessionManager: audioSessionManager)
-        audioCapture = capture
+        let input = LiveAudioInput(sessionManager: audioSessionManager)
+        liveAudioInput = input
 
         do {
-            try capture.configureAudioSession()
-            try capture.startCapture { [weak self] buffer in
-                // TODO: Process audio buffer through pitch detection pipeline
-                // For now, this sets up the infrastructure for real audio capture
-                _ = buffer
-            }
+            try input.start()
+
+            pitchDetector = PitchDetector(sampleRate: input.sampleRate)
             isAudioRunning = true
+
+            listeningTask = Task { [weak self] in
+                guard let self else { return }
+                for await samples in input.stream {
+                    await self.processRealAudioSamples(samples)
+                }
+            }
         } catch {
             AudioLogger.audio.error("Failed to start real audio tuning: \(error.localizedDescription)")
-            audioCapture = nil
+            liveAudioInput = nil
+            pitchDetector = nil
+        }
+    }
+
+    private func processRealAudioSamples(_ samples: [Float]) {
+        guard let detector = pitchDetector else { return }
+
+        if let frequency = detector.detectPitch(in: samples) {
+            let (note, cents) = findClosestNote(to: frequency)
+            currentNote = note.name
+            centsOffset = cents.clamped(to: -50...50)
+        } else {
+            currentNote = "--"
+            centsOffset = 0.0
         }
     }
 
@@ -157,15 +176,18 @@ final class TunerViewModel {
     func stopTuning() {
         guard isAudioRunning || isInterrupted else { return }
 
-        // Stop mock audio if active
+        // Stop listening task
         listeningTask?.cancel()
         listeningTask = nil
+
+        // Stop mock audio if active
         pitchSource?.stop()
         pitchSource = nil
 
         // Stop real audio capture if active
-        audioCapture?.stopCapture()
-        audioCapture = nil
+        liveAudioInput?.stop()
+        liveAudioInput = nil
+        pitchDetector = nil
 
         isAudioRunning = false
         isInterrupted = false
@@ -201,7 +223,7 @@ final class TunerViewModel {
         guard isInterrupted, wasRunningBeforeInterruption else { return }
 
         do {
-            try audioCapture?.resume()
+            try liveAudioInput?.resume()
             isInterrupted = false
             AudioLogger.audio.info("Tuning resumed after app became active")
         } catch {
@@ -215,7 +237,7 @@ final class TunerViewModel {
 
         wasRunningBeforeInterruption = true
         isInterrupted = true
-        audioCapture?.pause()
+        liveAudioInput?.pause()
         AudioLogger.audio.info("Tuning paused - app became inactive")
     }
 
