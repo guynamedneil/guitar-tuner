@@ -7,5 +7,5 @@ protocol PitchDetecting {
     ///   - frame: Array of audio samples (PCM Float values)
     ///   - sampleRate: The sample rate of the audio in Hz
     /// - Returns: A PitchFrame containing the detection results
-    func detect(_ frame: [Float], sampleRate: Double) -> PitchFrame
+    mutating func detect(_ frame: [Float], sampleRate: Double) -> PitchFrame
 }

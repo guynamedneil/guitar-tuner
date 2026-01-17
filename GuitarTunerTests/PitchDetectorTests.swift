@@ -12,49 +12,49 @@ final class PitchDetectorTests: XCTestCase {
     // MARK: - Sine Wave Detection Tests
 
     func testDetectA4_440Hz() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
         let result = detector.detect(samples, sampleRate: defaultSampleRate)
         assertDetectedFrequency(result, expected: 440.0, noteName: "A4")
     }
 
     func testDetectE2_82Hz() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate, minimumFrequency: 60)
+        var detector = PitchDetector(sampleRate: defaultSampleRate, minimumFrequency: 60)
         let samples = generateSineWave(frequency: 82.41, sampleRate: defaultSampleRate, sampleCount: 8192)
         let result = detector.detect(samples, sampleRate: defaultSampleRate)
         assertDetectedFrequency(result, expected: 82.41, noteName: "E2", minimumConfidence: 0.7)
     }
 
     func testDetectA2_110Hz() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let samples = generateSineWave(frequency: 110.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
         let result = detector.detect(samples, sampleRate: defaultSampleRate)
         assertDetectedFrequency(result, expected: 110.0, noteName: "A2")
     }
 
     func testDetectD3_147Hz() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let samples = generateSineWave(frequency: 146.83, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
         let result = detector.detect(samples, sampleRate: defaultSampleRate)
         assertDetectedFrequency(result, expected: 146.83, noteName: "D3")
     }
 
     func testDetectG3_196Hz() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let samples = generateSineWave(frequency: 196.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
         let result = detector.detect(samples, sampleRate: defaultSampleRate)
         assertDetectedFrequency(result, expected: 196.0, noteName: "G3")
     }
 
     func testDetectB3_247Hz() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let samples = generateSineWave(frequency: 246.94, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
         let result = detector.detect(samples, sampleRate: defaultSampleRate)
         assertDetectedFrequency(result, expected: 246.94, noteName: "B3")
     }
 
     func testDetectE4_330Hz() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let samples = generateSineWave(frequency: 329.63, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
         let result = detector.detect(samples, sampleRate: defaultSampleRate)
         assertDetectedFrequency(result, expected: 329.63, noteName: "E4")
@@ -63,7 +63,7 @@ final class PitchDetectorTests: XCTestCase {
     // MARK: - Silence Detection Tests
 
     func testSilenceReturnsNilFrequency() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let silence = generateSilence(sampleCount: defaultFrameSize)
 
         let result = detector.detect(silence, sampleRate: defaultSampleRate)
@@ -74,7 +74,7 @@ final class PitchDetectorTests: XCTestCase {
     }
 
     func testVeryLowAmplitudeReturnsNilFrequency() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate, silenceThreshold: 0.01)
+        var detector = PitchDetector(sampleRate: defaultSampleRate, silenceThreshold: 0.01)
         // Generate a sine wave with very low amplitude (below silence threshold)
         let samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize, amplitude: 0.005)
 
@@ -87,7 +87,7 @@ final class PitchDetectorTests: XCTestCase {
     // MARK: - RMS Calculation Tests
 
     func testRMSCalculationForSineWave() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let amplitude: Float = 0.5
         let samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize, amplitude: amplitude)
 
@@ -101,7 +101,7 @@ final class PitchDetectorTests: XCTestCase {
     // MARK: - Edge Cases
 
     func testEmptyBufferReturnsNilFrequency() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let empty: [Float] = []
 
         let result = detector.detect(empty, sampleRate: defaultSampleRate)
@@ -112,7 +112,7 @@ final class PitchDetectorTests: XCTestCase {
     }
 
     func testBufferTooShortForMinimumFrequency() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate, minimumFrequency: 60)
+        var detector = PitchDetector(sampleRate: defaultSampleRate, minimumFrequency: 60)
         // For 60 Hz at 44100 sample rate, maxLag = 735 samples
         // Buffer needs to be larger than maxLag
         let tooShort = generateSineWave(frequency: 100.0, sampleRate: defaultSampleRate, sampleCount: 500)
@@ -127,7 +127,7 @@ final class PitchDetectorTests: XCTestCase {
 
     func testDetectionAt48000Hz() {
         let sampleRate: Double = 48000
-        let detector = PitchDetector(sampleRate: sampleRate)
+        var detector = PitchDetector(sampleRate: sampleRate)
         let samples = generateSineWave(frequency: 440.0, sampleRate: sampleRate, sampleCount: 4096)
         let result = detector.detect(samples, sampleRate: sampleRate)
         assertDetectedFrequency(result, expected: 440.0, noteName: "A4 at 48000 Hz")
@@ -135,7 +135,7 @@ final class PitchDetectorTests: XCTestCase {
 
     func testDetectionAt44100Hz() {
         let sampleRate: Double = 44100
-        let detector = PitchDetector(sampleRate: sampleRate)
+        var detector = PitchDetector(sampleRate: sampleRate)
         let samples = generateSineWave(frequency: 440.0, sampleRate: sampleRate, sampleCount: 4096)
         let result = detector.detect(samples, sampleRate: sampleRate)
         assertDetectedFrequency(result, expected: 440.0, noteName: "A4 at 44100 Hz")
@@ -145,7 +145,7 @@ final class PitchDetectorTests: XCTestCase {
 
     func testLowConfidenceReturnsNilFrequency() {
         // Create a detector with a high confidence threshold
-        let detector = PitchDetector(sampleRate: defaultSampleRate, confidenceThreshold: 0.95)
+        var detector = PitchDetector(sampleRate: defaultSampleRate, confidenceThreshold: 0.95)
         // Generate noisy signal that won't achieve 95% confidence
         var samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize, amplitude: 0.3)
         // Add noise
@@ -165,7 +165,7 @@ final class PitchDetectorTests: XCTestCase {
     // MARK: - Legacy API Tests
 
     func testLegacyDetectPitchMethod() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
         let frequency = detector.detectPitch(in: samples)
 
@@ -174,7 +174,7 @@ final class PitchDetectorTests: XCTestCase {
     }
 
     func testLegacyDetectPitchSilence() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate)
+        var detector = PitchDetector(sampleRate: defaultSampleRate)
         let silence = generateSilence(sampleCount: defaultFrameSize)
 
         let frequency = detector.detectPitch(in: silence)
@@ -182,10 +182,60 @@ final class PitchDetectorTests: XCTestCase {
         XCTAssertNil(frequency, "Legacy method should return nil for silence")
     }
 
+    // MARK: - Signal Conditioning Integration Tests
+
+    func testDetectionWithSignalConditioningEnabled() {
+        var detector = PitchDetector(sampleRate: defaultSampleRate, conditionerConfig: .default)
+        let samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
+
+        let result = detector.detect(samples, sampleRate: defaultSampleRate)
+
+        assertDetectedFrequency(result, expected: 440.0, noteName: "A4 with conditioning")
+    }
+
+    func testDetectionWithSignalConditioningDisabled() {
+        var detector = PitchDetector(sampleRate: defaultSampleRate, conditionerConfig: .none)
+        let samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
+
+        let result = detector.detect(samples, sampleRate: defaultSampleRate)
+
+        assertDetectedFrequency(result, expected: 440.0, noteName: "A4 without conditioning")
+    }
+
+    func testDetectionWithDCOffset() {
+        var detector = PitchDetector(sampleRate: defaultSampleRate, conditionerConfig: .default)
+        var samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
+
+        // Add significant DC offset that signal conditioning should remove
+        let dcOffset: Float = 0.4
+        for i in 0..<samples.count {
+            samples[i] += dcOffset
+        }
+
+        let result = detector.detect(samples, sampleRate: defaultSampleRate)
+
+        assertDetectedFrequency(result, expected: 440.0, noteName: "A4 with DC offset")
+    }
+
+    func testDetectionWithCustomConditionerConfig() {
+        // Test with only DC removal enabled
+        let config = SignalConditionerConfig(
+            removeDCOffset: true,
+            applyPreEmphasis: false,
+            applyWindow: false
+        )
+        var detector = PitchDetector(sampleRate: defaultSampleRate, conditionerConfig: config)
+        let samples = generateSineWave(frequency: 440.0, sampleRate: defaultSampleRate, sampleCount: defaultFrameSize)
+
+        let result = detector.detect(samples, sampleRate: defaultSampleRate)
+
+        assertDetectedFrequency(result, expected: 440.0, noteName: "A4 with DC removal only")
+    }
+
     // MARK: - All Guitar String Frequencies Test
 
     func testAllStandardGuitarTuningFrequencies() {
-        let detector = PitchDetector(sampleRate: defaultSampleRate, minimumFrequency: 60)
+        var detector = PitchDetector(sampleRate: defaultSampleRate, minimumFrequency: 60)
         let guitarFrequencies: [(name: String, frequency: Double)] = [
             ("E2", 82.41),
             ("A2", 110.0),
