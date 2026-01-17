@@ -129,7 +129,7 @@ final class TunerViewModel {
         listeningTask = Task { [weak self] in
             guard let self, let pitchSource = self.pitchSource else { return }
             for await frame in pitchSource.pitchStream {
-                await self.handlePitchFrame(frame)
+                await self.updateDisplayFromPitchFrame(frame)
             }
         }
     }
@@ -161,15 +161,8 @@ final class TunerViewModel {
 
     private func processRealAudioSamples(_ samples: [Float]) {
         guard let detector = pitchDetector else { return }
-
-        if let frequency = detector.detectPitch(in: samples) {
-            let (note, cents) = findClosestNote(to: frequency)
-            currentNote = note.name
-            centsOffset = cents.clamped(to: -50...50)
-        } else {
-            currentNote = "--"
-            centsOffset = 0.0
-        }
+        let frame = detector.detect(samples, sampleRate: detector.sampleRate)
+        updateDisplayFromPitchFrame(frame)
     }
 
     /// Stops the tuning session and ends audio capture
@@ -243,7 +236,7 @@ final class TunerViewModel {
 
     // MARK: - Pitch Processing
 
-    private func handlePitchFrame(_ frame: PitchFrame) {
+    private func updateDisplayFromPitchFrame(_ frame: PitchFrame) {
         guard let frequency = frame.frequencyHz, frame.confidence > 0.5 else {
             currentNote = "--"
             centsOffset = 0.0
