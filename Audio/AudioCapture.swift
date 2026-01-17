@@ -5,14 +5,18 @@ import AVFoundation
 /// Handles microphone audio capture using AVAudioEngine
 final class AudioCapture {
     private let audioEngine = AVAudioEngine()
+    private let sessionManager: AudioSessionManager
 
-    /// Configures the audio session for recording
+    /// Creates an audio capture instance with the specified session manager
+    /// - Parameter sessionManager: The audio session manager to use for session configuration
+    init(sessionManager: AudioSessionManager) {
+        self.sessionManager = sessionManager
+    }
+
+    /// Configures and activates the audio session for recording
     func configureAudioSession() throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .measurement, options: .defaultToSpeaker)
-        try session.setActive(true)
-
-        AudioLogger.audio.info("Audio session configured - category: playAndRecord, mode: measurement")
+        try sessionManager.configureSession()
+        try sessionManager.activateSession()
     }
 
     /// Starts capturing audio from the microphone
@@ -36,5 +40,17 @@ final class AudioCapture {
         audioEngine.stop()
 
         AudioLogger.audio.info("Audio capture stopped")
+    }
+
+    /// Pauses the audio engine without removing the tap
+    func pause() {
+        audioEngine.pause()
+        AudioLogger.audio.info("Audio capture paused")
+    }
+
+    /// Resumes the audio engine after being paused
+    func resume() throws {
+        try audioEngine.start()
+        AudioLogger.audio.info("Audio capture resumed")
     }
 }
